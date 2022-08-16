@@ -22,7 +22,6 @@ describe("Authenticate User", () => {
             password: "654321",
         }
         const createdUser = await createUserUsecase.execute(newUser);
-        console.log(createdUser);
 
         const {user, token} = await authenticateUserUsecase.execute({
             email: newUser.email,
