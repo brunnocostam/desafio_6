@@ -1,6 +1,7 @@
 import { InMemoryStatementsRepository } from "../../modules/statements/repositories/in-memory/InMemoryStatementsRepository";
 import { CreateStatementUseCase } from "../../modules/statements/useCases/createStatement/CreateStatementUseCase";
-import { GetBalanceUseCase } from "../../modules/statements/useCases/getBalance/GetBalanceUseCase";
+import { ICreateStatementDTO } from "../../modules/statements/useCases/createStatement/ICreateStatementDTO";
+import { GetStatementOperationUseCase } from "../../modules/statements/useCases/getStatementOperation/GetStatementOperationUseCase";
 import { InMemoryUsersRepository } from "../../modules/users/repositories/in-memory/InMemoryUsersRepository";
 import { CreateUserUseCase } from "../../modules/users/useCases/createUser/CreateUserUseCase";
 
@@ -8,29 +9,42 @@ import { CreateUserUseCase } from "../../modules/users/useCases/createUser/Creat
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let createUserUseCase: CreateUserUseCase;
 let inMemoryStatementsRepository: InMemoryStatementsRepository;
-let createStatementeUseCase: CreateStatementUseCase;
-let getBalanceUseCase: GetBalanceUseCase;
+let createStatementUseCase: CreateStatementUseCase;
+let getStatementOperation: GetStatementOperationUseCase;
 
 
-
-
-describe("Get balance", () => {
+describe("Get operation", () => {
     beforeEach(() => {
         inMemoryUsersRepository = new InMemoryUsersRepository();
         inMemoryStatementsRepository = new InMemoryStatementsRepository();
         createUserUseCase = new CreateUserUseCase(inMemoryUsersRepository);
-        getBalanceUseCase= new GetBalanceUseCase(inMemoryStatementsRepository, inMemoryUsersRepository);
+        createStatementUseCase = new CreateStatementUseCase(inMemoryUsersRepository, inMemoryStatementsRepository);
+        getStatementOperation = new GetStatementOperationUseCase(inMemoryUsersRepository, inMemoryStatementsRepository);
     })
 
-    it ("shoul be able to get balance from a user", async () => {
-        const { id } = await createUserUseCase.execute({
-            name: "Franklin",
+    it ("shoul be able to get the info from an operation", async () => {
+        const newUser = await createUserUseCase.execute({
+            name: "Carl Johnosn",
             email: "franklin@example.com",
             password: "202122",
         });
 
-        const balance = await getBalanceUseCase.execute({ user_id: id as string });
+        const deposit = await createStatementUseCase.execute({
+            user_id: newUser.id as string,
+            type: 'deposit',
+            amount: 500,
+            description: "pix supermercado",
+        } as ICreateStatementDTO);
 
-        expect(balance).toHaveProperty("balance");
+        const operation = await getStatementOperation.execute({
+            user_id: newUser.id as string,
+            statement_id: deposit.id as string,
+        })
+
+        console.log(operation);
+        
+        expect(operation.id).toEqual(deposit.id);
+        expect(operation.user_id).toEqual(newUser.id);
+
     })
 });

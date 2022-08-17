@@ -10,7 +10,7 @@ import { CreateUserUseCase } from "../../modules/users/useCases/createUser/Creat
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let createUserUseCase: CreateUserUseCase;
 let inMemoryStatementsRepository: InMemoryStatementsRepository;
-let createStatementeUseCase: CreateStatementUseCase;
+let createStatementUseCase: CreateStatementUseCase;
 
 
 
@@ -20,7 +20,7 @@ describe("Get balance", () => {
         inMemoryUsersRepository = new InMemoryUsersRepository();
         inMemoryStatementsRepository = new InMemoryStatementsRepository();
         createUserUseCase = new CreateUserUseCase(inMemoryUsersRepository);
-        createStatementeUseCase = new CreateStatementUseCase(inMemoryUsersRepository, inMemoryStatementsRepository);
+        createStatementUseCase = new CreateStatementUseCase(inMemoryUsersRepository, inMemoryStatementsRepository);
     });
 
     it ("Should be able to criate a deposit statement", async () => {
@@ -37,7 +37,7 @@ describe("Get balance", () => {
             description: "pix supermercado",
         };
 
-        const statement = await createStatementeUseCase.execute(newDeposit as ICreateStatementDTO);
+        const statement = await createStatementUseCase.execute(newDeposit as ICreateStatementDTO);
         expect(statement).toHaveProperty("id");
     });
 

@@ -8,7 +8,6 @@ import { CreateUserUseCase } from "../../modules/users/useCases/createUser/Creat
 let inMemoryUsersRepository: InMemoryUsersRepository;
 let createUserUseCase: CreateUserUseCase;
 let inMemoryStatementsRepository: InMemoryStatementsRepository;
-let createStatementeUseCase: CreateStatementUseCase;
 let getBalanceUseCase: GetBalanceUseCase;
 
 
