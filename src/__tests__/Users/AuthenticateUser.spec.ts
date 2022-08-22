@@ -1,5 +1,6 @@
 import { InMemoryUsersRepository } from "../../modules/users/repositories/in-memory/InMemoryUsersRepository";
 import { AuthenticateUserUseCase } from "../../modules/users/useCases/authenticateUser/AuthenticateUserUseCase"
+import { IncorrectEmailOrPasswordError } from "../../modules/users/useCases/authenticateUser/IncorrectEmailOrPasswordError";
 import { CreateUserUseCase } from "../../modules/users/useCases/createUser/CreateUserUseCase";
 import { ICreateUserDTO } from "../../modules/users/useCases/createUser/ICreateUserDTO";
 
@@ -32,4 +33,25 @@ describe("Authenticate User", () => {
         expect(user.name).toEqual(createdUser.name);
         expect(token).toBeDefined();
     });
+
+    it("should not be able to authenticate a non-existing user", async () => {
+        const anotherUser = await createUserUsecase.execute({
+            name: "Lance Wilson",
+            email: "mynameissweet@gmail.com",
+            password: "Pier69"
+        });
+        expect(async () => {
+            await authenticateUserUsecase.execute({
+                email: anotherUser.email,
+                password: "wrongpassword",
+            })
+        }).rejects.toBeInstanceOf(IncorrectEmailOrPasswordError);
+            expect(async () => {
+            await authenticateUserUsecase.execute({
+                email: "wrongemail",
+                password: anotherUser.password,
+            })   
+        })
+    })
+
 });

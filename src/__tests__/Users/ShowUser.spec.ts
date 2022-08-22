@@ -1,7 +1,9 @@
 import { InMemoryUsersRepository } from "../../modules/users/repositories/in-memory/InMemoryUsersRepository"
 import { AuthenticateUserUseCase } from "../../modules/users/useCases/authenticateUser/AuthenticateUserUseCase";
 import { CreateUserUseCase } from "../../modules/users/useCases/createUser/CreateUserUseCase";
+import { ShowUserProfileError } from "../../modules/users/useCases/showUserProfile/ShowUserProfileError";
 import { ShowUserProfileUseCase } from "../../modules/users/useCases/showUserProfile/ShowUserProfileUseCase";
+import { AppError } from "../../shared/errors/AppError";
 
 
 let inMemoryUsersRepository: InMemoryUsersRepository;
@@ -37,4 +39,20 @@ describe("Show users", () => {
         expect(authProfile.user.id).toEqual(id)
 
     });
+
+    it("should not be able to show a user profile", async () => {
+        expect(async () => {
+            const anotherUser = {
+                name: "Greg",
+                email: "greg@example.com",
+                password: "654321",
+            }
+
+            const wrong_user_id = "wrong_user";
+
+            await createUserUsecase.execute(anotherUser)
+            await showUserProfileUseCase.execute(wrong_user_id as string);
+        }).rejects.toBeInstanceOf(ShowUserProfileError);
+    })
+
 });

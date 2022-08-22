@@ -1,5 +1,6 @@
 import { InMemoryStatementsRepository } from "../../modules/statements/repositories/in-memory/InMemoryStatementsRepository";
 import { CreateStatementUseCase } from "../../modules/statements/useCases/createStatement/CreateStatementUseCase";
+import { GetBalanceError } from "../../modules/statements/useCases/getBalance/GetBalanceError";
 import { GetBalanceUseCase } from "../../modules/statements/useCases/getBalance/GetBalanceUseCase";
 import { InMemoryUsersRepository } from "../../modules/users/repositories/in-memory/InMemoryUsersRepository";
 import { CreateUserUseCase } from "../../modules/users/useCases/createUser/CreateUserUseCase";
@@ -21,7 +22,7 @@ describe("Get balance", () => {
         getBalanceUseCase= new GetBalanceUseCase(inMemoryStatementsRepository, inMemoryUsersRepository);
     })
 
-    it ("shoul be able to get balance from a user", async () => {
+    it("shoul be able to get balance from a user", async () => {
         const { id } = await createUserUseCase.execute({
             name: "Franklin",
             email: "franklin@example.com",
@@ -31,5 +32,19 @@ describe("Get balance", () => {
         const balance = await getBalanceUseCase.execute({ user_id: id as string });
 
         expect(balance).toHaveProperty("balance");
+    })
+
+    it("should not be able to get balance from a non-existing user", async () => {
+        const { id } = await createUserUseCase.execute({
+            name: "Sean Johson",
+            email: "mynameissweet@example.com",
+            password: "EndOFTheLine"
+        });
+
+        const wrongId = "01198988776";
+        expect(async () => {
+            await getBalanceUseCase.execute({ user_id: wrongId as string});
+        }).rejects.toBeInstanceOf(GetBalanceError);
+
     })
 });
