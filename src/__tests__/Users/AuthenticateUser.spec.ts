@@ -34,24 +34,40 @@ describe("Authenticate User", () => {
         expect(token).toBeDefined();
     });
 
-    it("should not be able to authenticate a non-existing user", async () => {
-        const anotherUser = await createUserUsecase.execute({
+    it ("should not be able to authenticate a non-existing user because of email", async () => {
+        const anotherUser = {
             name: "Lance Wilson",
-            email: "mynameissweet@gmail.com",
-            password: "Pier69"
-        });
-        expect(async () => {
-            await authenticateUserUsecase.execute({
-                email: anotherUser.email,
-                password: "wrongpassword",
-            })
-        }).rejects.toBeInstanceOf(IncorrectEmailOrPasswordError);
-            expect(async () => {
-            await authenticateUserUsecase.execute({
-                email: "wrongemail",
+            email: "mynameisryder@gmail.com",
+            password: "imActuallyABalla",
+        }
+
+        const anotherCreatedUser = await createUserUsecase.execute(anotherUser);
+
+        
+        await expect(
+            authenticateUserUsecase.execute({
+                email: "imaballa@gmail.com",
                 password: anotherUser.password,
-            })   
-        })
+            })
+        ).rejects.toBeInstanceOf(IncorrectEmailOrPasswordError);
     })
+
+    
+    it("should not be able to authenticate a non-existing user because of password", async () => {
+        const otherUser = {
+            name: "OGLoc",
+            email: "theoglocfella@gmail.com",
+            password: "ImmaBeFamous"
+        }
+
+        const otherCreatedUser = await createUserUsecase.execute(otherUser);
+
+        await expect(
+            authenticateUserUsecase.execute({
+                email: otherCreatedUser.email,
+                password: "IWannaBeAFamousRapper",
+            })
+        ).rejects.toBeInstanceOf(IncorrectEmailOrPasswordError);
+    });
 
 });

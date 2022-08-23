@@ -42,16 +42,10 @@ describe("Show users", () => {
 
     it("should not be able to show a user profile", async () => {
         expect(async () => {
-            const anotherUser = {
-                name: "Greg",
-                email: "greg@example.com",
-                password: "654321",
-            }
-
             const wrong_user_id = "wrong_user";
 
-            await createUserUsecase.execute(anotherUser)
-            await showUserProfileUseCase.execute(wrong_user_id as string);
+            // await createUserUsecase.execute(anotherUser)
+            await showUserProfileUseCase.execute(wrong_user_id);
         }).rejects.toBeInstanceOf(ShowUserProfileError);
     })
 
